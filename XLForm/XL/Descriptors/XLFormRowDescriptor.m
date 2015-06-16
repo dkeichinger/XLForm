@@ -46,7 +46,6 @@
 
 @interface XLFormRowDescriptor() <NSCopying>
 
-@property XLFormBaseCell * cell;
 @property (nonatomic) NSMutableArray *validators;
 
 @property BOOL isDirtyDisablePredicateCache;
@@ -63,6 +62,8 @@
 @synthesize hidden = _hidden;
 @synthesize hidePredicateCache = _hidePredicateCache;
 @synthesize disablePredicateCache = _disablePredicateCache;
+
+static NSBundle *bundle = nil;
 
 
 -(instancetype)init
@@ -106,14 +107,31 @@
     return [[XLFormRowDescriptor alloc] initWithTag:tag rowType:rowType title:title];
 }
 
++(NSBundle *)bundle
+{
+    @synchronized(self) {
+        if(!bundle) {
+            bundle = [NSBundle mainBundle];
+        }
+        return bundle;
+    }
+}
+
++(void)setBundle:(NSBundle *)value
+{
+    @synchronized(self) {
+        bundle = value;
+    }
+}
+
 -(XLFormBaseCell *)cellForFormController:(XLFormViewController *)formController
 {
     if (!_cell){
         id cellClass = self.cellClass ?: [XLFormViewController cellClassesForRowDescriptorTypes][self.rowType];
         NSAssert(cellClass, @"Not defined XLFormRowDescriptorType: %@", self.rowType ?: @"");
         if ([cellClass isKindOfClass:[NSString class]]) {
-            if ([[NSBundle mainBundle] pathForResource:cellClass ofType:@"nib"]){
-                _cell = [[[NSBundle mainBundle] loadNibNamed:cellClass owner:nil options:nil] firstObject];
+            if ([[XLFormRowDescriptor bundle] pathForResource:cellClass ofType:@"nib"]){
+                _cell = [[[XLFormRowDescriptor bundle] loadNibNamed:cellClass owner:nil options:nil] firstObject];
             }
         } else {
             _cell = [[cellClass alloc] initWithStyle:self.cellStyle reuseIdentifier:nil];

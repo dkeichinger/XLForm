@@ -50,10 +50,13 @@ typedef NS_ENUM(NSUInteger, XLFormPresentationMode) {
 @property (nonatomic) id value;
 @property Class valueTransformer;
 @property UITableViewCellStyle cellStyle;
+@property XLFormBaseCell * cell;
 
 @property (nonatomic) NSMutableDictionary *cellConfig;
 @property (nonatomic) NSMutableDictionary *cellConfigIfDisabled;
 @property (nonatomic) NSMutableDictionary *cellConfigAtConfigure;
+
+- (void)configureCellAtCreationTime;
 
 @property id disabled;
 -(BOOL)isDisabled;
@@ -67,6 +70,10 @@ typedef NS_ENUM(NSUInteger, XLFormPresentationMode) {
 
 +(instancetype)formRowDescriptorWithTag:(NSString *)tag rowType:(NSString *)rowType;
 +(instancetype)formRowDescriptorWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title;
+
++(NSBundle *)bundle;
+
++(void)setBundle:(NSBundle *)bundle;
 
 -(XLFormBaseCell *)cellForFormController:(XLFormViewController *)formController;
 
